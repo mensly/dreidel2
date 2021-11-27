@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 void main() {
@@ -50,6 +52,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static const _githubUrl = "https://github.com/mensly/dreidel2";
   static const _rules = [
     "Players take turns to spin the dreidel, with what it lands on determining the outcome. ",
     "There is a cup in the middle.",
@@ -80,9 +83,10 @@ class _MyHomePageState extends State<MyHomePage> {
     "",
     "Game ends when someone vomits or gets naked or engaged, players swapping in and out is fine.",
     "",
-    "No scarves allowed, any children resulting from this game should be raised Jewish."
+    "No scarves allowed, kippot stay on, and any children resulting from this game should be raised Jewish."
   ];
   VideoPlayerController? _controller;
+  var _canLaunch = false;
   var _loadingStarted = false;
   var _loading = true;
   var _spinning = false;
@@ -107,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
   };
 
   void _loadVideoUrls(AssetBundle bundle) async {
+    _canLaunch = await canLaunch(_githubUrl);
     final manifestContent = await bundle.loadString('AssetManifest.json');
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
@@ -171,6 +176,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ));
   }
 
+  void _openGitHub() async {
+    await launch(_githubUrl);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_loadingStarted) {
@@ -214,15 +223,18 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           Padding(
               padding: const EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () => _showRules(context),
-                child: const Icon(
-                  Icons.rule_folder,
-                  size: 26.0,
-                ),
+              child: TextButton.icon(
+                  onPressed: () => _showRules(context),
+                  label: const Text("RULES", style: TextStyle(color: Colors.white)),
+                  icon: const Icon(Icons.rule_folder, size: 26.0, color: Colors.white),
               )),
         ],
       ),
+      floatingActionButton: _canLaunch ? FloatingActionButton.extended(
+        icon: const Icon(FontAwesomeIcons.githubAlt),
+        label: const Text("Fork me on GitHub"),
+        onPressed: () => _openGitHub(),
+      ) : null,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
