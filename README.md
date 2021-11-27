@@ -1,16 +1,31 @@
-# dreidel2
+# Dreidel drinking game rules
 
-Drinking game for Hannukah
+Players take turns to spin the dreidel, with what it lands on determining the outcome. There is a cup in the middle.
 
-## Getting Started
+* נ Nun - NOTHING happens
+* ה Hay - HAVE a drink
+* ש Shin - SHARE a drink into the cup
+* ג Gimel - GET the cup, and down it
 
-This project is a starting point for a Flutter application.
+A full-cup ש counts as a ג and an empty-cup ג counts as a ש.
 
-A few resources to get you started if this is your first Flutter project:
+* Three נ's in a row - Those three players must finish their drinks.
+* Three ה's in a row - Everyone in the game has a drink
+* Three ש's in a row - Those three pour into the cup until it is full or their drink is empty
+* Three ג's in a row - Those three remove an item of clothing each
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Game ends when someone vomits or gets naked or engaged, players swapping in and out is fine.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+No scarves allowed.
+
+# App
+
+This webapp was made entirely while having trouble sleeping.
+
+# License
+[DO WHAT THE FUCK YOU WANT TO BUT DON'T BE A DICK PUBLIC LICENSE](http://mens.ly/LICENSE.txt)
+
+## Play online
+
+A hosted copy of this repository is available at [http://dreidel.mens.ly]
+

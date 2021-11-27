@@ -15,10 +15,28 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dreidel Game',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: const Color(0xff003f9a).toMaterialColor(),
       ),
-      home: const MyHomePage(title: 'Dreidel Game'),
+      home: const MyHomePage(title: 'Dreidel Drinking Game'),
     );
+  }
+}
+
+extension ColorExtension on Color {
+  MaterialColor toMaterialColor() {
+    Map<int, Color> color = {
+      50: withOpacity(.1),
+      100: withOpacity(.2),
+      200: withOpacity(.3),
+      300: withOpacity(.4),
+      400: withOpacity(.5),
+      500: withOpacity(.6),
+      600: withOpacity(.7),
+      700: withOpacity(.8),
+      800: withOpacity(.9),
+      900: withOpacity(1.0),
+    };
+    return MaterialColor(value, color);
   }
 }
 
@@ -32,6 +50,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  static const _rules = [
+    "Players take turns to spin the dreidel, with what it lands on determining the outcome. ",
+    "There is a cup in the middle.",
+    "",
+    "• " "נ" " Nun — NOTHING happens",
+    "• " "ה" " Hay — HAVE a drink",
+    "• " "ש" " Shin — SHARE a drink into the cup",
+    "• " "ג" " Gimel — GET the cup, and down it",
+    "",
+    "A full-cup "
+        "ש"
+        " counts as a "
+        "ג"
+        " and an empty-cup "
+        "ג"
+        " counts as a "
+        "ש"
+        ".",
+    "",
+    "• Three "
+        "נ"
+        "'s in a row — Those three players must finish their drinks.",
+    "• Three " "ה" "'s in a row — Everyone in the game has a drink",
+    "• Three "
+        "ש"
+        "'s in a row — Those three pour into the cup until it is full or their drink is empty",
+    "• Three " "ג" "'s in a row — Those three remove an item of clothing each",
+    "",
+    "Game ends when someone vomits or gets naked or engaged, players swapping in and out is fine.",
+    "",
+    "No scarves allowed, any children resulting from this game should be raised Jewish."
+  ];
   VideoPlayerController? _controller;
   var _loadingStarted = false;
   var _loading = true;
@@ -75,8 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void _chooseSide() async {
     _controller?.dispose();
     final side = (_sides.keys.toList()..shuffle()).first;
-    final video = (_videos[(side == _prevSide && side == _prevPrevSide) ? "${side}3" : side]!
-      ..shuffle()).first;
+    final video = (_videos[
+            (side == _prevSide && side == _prevPrevSide) ? "${side}3" : side]!
+          ..shuffle())
+        .first;
     final controller = VideoPlayerController.asset(video);
     _controller = controller;
     controller.setLooping(false);
@@ -100,6 +152,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _showRules(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: const Text("Dreidel Drinking Game Rules"),
+              content: SingleChildScrollView(
+                  child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _rules.map((e) => Text(e)).toList(),
+              )),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("OK"))
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_loadingStarted) {
@@ -117,18 +188,40 @@ class _MyHomePageState extends State<MyHomePage> {
             child: VideoPlayer(controller)));
       }
     } else {
-      mainChildren.add(TextButton(onPressed: () => _chooseSide(), child: const Text("Spin Dreidel", textScaleFactor: 4.0)));
+      mainChildren.add(Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: TextButton(
+            onPressed: () => _chooseSide(),
+            child: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("Spin Dreidel", textScaleFactor: 4.0),
+            )),
+      ));
       if (_prevSide.isNotEmpty) {
-        mainChildren.add(Text(_sides[_prevSide]!, textAlign: TextAlign.center, textScaleFactor: 10));
+        mainChildren.add(Text(_sides[_prevSide]!,
+            textAlign: TextAlign.center, textScaleFactor: 8));
       }
       mainChildren.add(const Padding(
         padding: EdgeInsets.all(8.0),
-        child: Text("Game ends when nobody wants to play anymore, someone vomits, someone gets naked, or someone gets engaged.", textAlign: TextAlign.center),
+        child: Text(
+            "Game ends when nobody wants to play anymore, someone vomits, someone gets naked, or someone gets engaged.",
+            textAlign: TextAlign.center),
       ));
     }
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () => _showRules(context),
+                child: const Icon(
+                  Icons.rule_folder,
+                  size: 26.0,
+                ),
+              )),
+        ],
       ),
       body: Center(
         child: Column(
